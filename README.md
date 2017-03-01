@@ -1,8 +1,4 @@
 
-Xử lý và tổng hợp dữ liệu với dplyr
-Đức Phạm
-
-
 # Giới thiệu
 
 Gói dplyr là gói được sử dụng phổ biến nhất trên R với những tính năng chuyên cho việc xử lý, tổng hợp dữ liệu trước khi xây dựng model phân tích dữ liệu. Bài giảng ngày hôm nay được xây dựng để  hỗ trợ người dùng R có được cái nhìn tổng thể về khả năng tổng hợp và xử lý dữ liệu của R thông quan gói dplyr. Bài giảng cũng sẽ lồng ghép các hàm cơ bản trên R để người dùng có được cái nhìn khách quan hơn về các hàm trong gói dplyr.
