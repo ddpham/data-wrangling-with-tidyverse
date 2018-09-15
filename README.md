@@ -1,5 +1,5 @@
 
-# Giới thiệu
+# 1.Giới thiệu
 
 Gói dplyr là gói được sử dụng phổ biến nhất trên R với những tính năng chuyên cho việc xử lý, tổng hợp dữ liệu trước khi xây dựng model phân tích dữ liệu. Bài giảng ngày hôm nay được xây dựng để  hỗ trợ người dùng R có được cái nhìn tổng thể về khả năng tổng hợp và xử lý dữ liệu của R thông quan gói dplyr. Bài giảng cũng sẽ lồng ghép các hàm cơ bản trên R để người dùng có được cái nhìn khách quan hơn về các hàm trong gói dplyr.
 Trước khi bắt đầu nội dung bài giảng, chúng ta có thể download và gọi gói dplyr.
@@ -9,7 +9,7 @@ library(dplyr)
 library(magrittr)
 ```
 
-# Giới thiệu về pipe operator
+# 2.Giới thiệu về pipe operator
 Pipe operator (%>%) là khái niệm về việc viết code theo cách đơn giản và dễ theo dõi giúp cho người đọc và người viết code trên R có thể theo dõi được code một cách dễ dàng nhất. Trên R, thông thường người dùng sẽ viết code dưới dạng trong ngoặc (nested), và cấu trúc câu lệnh sẽ phức tạp khi có nhiều thao tác tính toán, biến đổi (hàm) được xử dụng để trả về kết quả cuối cùng. Khái niệm pipe operator được khởi xướng từ gói magrittr với nhiều tính năng hữu dụng, hỗ trợ người viết code có thể viết code trên R được hiệu quả và dễ theo dõi hoặc sửa trong quá trình chạy và update code.  Gói dplyr có ứng dụng một số tính năng cơ bản của pipe operator, cụ thể là cấu trúc %>% với một số tính năng cơ bản của pipe operator từ gói magrittr. Pipe operator được giới thiệu trong bài giảng này sẽ chỉ dừng lại ở phạm vi ứng dụng trong gói dplyr, các tính năng khác của pipe operator, bạn đọc có thể tìm hiểu trong tài liệu của gói magrittr .
 
 Ví dụ đơn giản của %>%:
@@ -122,9 +122,9 @@ x %>%
 
 Tất nhiên, *lamda* trong gói dplyr chỉ thực sự hữu dụng khi chúng ta dùng hàm này một lần và không muốn mất công tạo một hàm mới, nếu hàm được sử dụng nhiều lần thì cách tốt nhất là định nghĩa hàm, sau đó dùng %>% để truyền biến vào hàm. 
 
-# Các hàm cơ bản trong dplyr
+# 3.Các hàm cơ bản trong dplyr
 
-## Lấy dữ liệu mẫu từ bảng dữ liệu
+## 3.1.Lấy dữ liệu mẫu từ bảng dữ liệu
 Khi tiếp cận với một bảng dữ liệu, phần lớn người phân tích và xử lý dữ liệu thường làm thao tác đầu tiên là quan sát các giá trị mẫu của dữ liệu. Trong R Base, chắc hẳn các bạn đều dùng hàm head() và tail() để nhặt ra một số dòng đầu tiên  và cuối cùng của dữ liệu.
 ```r
 mtcars %>% head(5) # lấy 5 dòng đầu của dữ liệu
@@ -140,7 +140,7 @@ iris %>% sample_frac(.1) # lấy 10 % tổng số dòng có trong bảng iris
 Ngoài việc nhìn nhanh các thông tin trên bảng dữ liệu mà bạn muốn phân tích, hai hàm trên cũng hỗ trợ bạn trong việc lấy dữ liệu mẫu của một bảng dữ liệu để phân tích hoặc xây dựng mô hình. 
 
 
-## Lọc dữ liệu theo điều kiện
+## 3.2.Lọc dữ liệu theo điều kiện
 
 Thường xuyên trong quá trình xử lý và phân tích dữ liệu, người dùng sẽ phải lọc dữ liệu theo điều kiện nào đó, ví dụ lấy danh sách khách hàng nam có độ tuổi từ 35 trở lên, lấy các hợp đồng có giá trị từ 10 triệu trở lên hay đại loại vậy. Trong gói dplyr, hàm filter() và hàm slice() được sử dụng để làm công việc này.
 ```r
@@ -228,7 +228,7 @@ mtcars %>%
 ```
 
 
-## Sắp xếp dữ liệu
+## 3.3.Sắp xếp dữ liệu
 
 Ngoài việc lọc dữ liệu có điều kiện, chúng ta cũng thường xuyên thực hiện việc sắp xếp dữ liệu theo một trật tự nhất định nào đó khi xem dữ liệu. Hàm arrange() hỗ trợ công việc này. 
 ```r
@@ -257,7 +257,7 @@ mtcars %>%
 ```
 
 
-## Lấy dữ liệu theo trường thông tin mong muốn
+## 3.4.Lấy dữ liệu theo trường thông tin mong muốn
 
 Khi bạn cần lấy chi tiết các trường thông tin nào trong bảng dữ liệu, bạn có thể dùng hàm select() để nhặt chi tiết các trường. Hàm select() tương đồng với tham số select trong hàm subset().
 ```r
@@ -335,7 +335,7 @@ mtcars %>%
 ```
 
 
-## Lọc các giá trị duy nhất
+## 3.5.Lọc các giá trị duy nhất
 
 Đôi khi, bạn chỉ muốn nhặt ra các giá trị duy nhất trong bảng dữ liệu. Để làm được việc này bạn có thể dùng hàm distinct(), hàm này tương đồng với hàm unique() trong R base.
 ```r
@@ -356,7 +356,7 @@ mtcars[, c("vs", "gear")] %>%
 Sự khác biệt rõ ràng nhất giữa distinct() và unique() mà các bạn có thể quan sát ở trên là với hàm unique(), chúng ta bắt buộc phải liệt kê rõ ràng vector hoặc bảng dữ liệu nào cần lấy danh sách giá trị duy nhất. Trong khi đó, với distinct() bạn có thể tìm danh sách các giá trị duy nhất của 1 cột, hoặc nhiều cột từ một bảng dữ liệu nào đó.
 
 
-## Tạo mới trường dữ liệu
+## 3.6.Tạo mới trường dữ liệu
 
 Trong quá trình xử lý dữ liệu, rất nhiều lúc bạn muốn tạo thêm các trường dữ liệu mới (trường dữ liệu phát sinh) dựa vào công thức có liên quan đến các trường dữ liệu hiện tại (business rules). Hàm mutate() được sử dụng để làm công việc này. Trong R base, chúng ta cũng có thể thực hiện được yêu cầu này với hàm transform(), tuy nhiên với năng lực có phần hạn chế hơn, chúng ta sẽ đi qua ví dụ để làm rõ ý này.
 ```r
@@ -426,7 +426,7 @@ mtcars %>%
   head
 ```
 
-## Tổng hợp các chỉ tiêu dữ liệu
+## 3.7.Tổng hợp các chỉ tiêu dữ liệu
 
 Trong quá trình xử lý dữ liệu, rất nhiều khi bạn phải tổng hợp dữ liệu theo các cách như: tính tổng, tính số dư bình quân, phương sai, tổng số lượng quan sát... Trong gói dplyr, bạn có thể sử dụng hàm summarise() để thực hiện công việc này.
 ```r
@@ -464,7 +464,7 @@ admissions %>%
 Kết qủa trên cho chúng ta cái nhìn chi tiết hơn về tổng số lượng sinh viên ứng tuyển, số lượng sinh viên ứng tuyển bình quân và độ lệch chuẩn của số lượng sinh viên được chia theo giới tính và kết quả xét tuyển của trường (nhận, không nhận).
 
 
-## Ví dụ tổng hợp
+## 3.8.Ví dụ tổng hợp
 
 Vừa rồi chúng ta đã đi qua những hàm cơ bản trong dplyr được sử dụng thường xuyên trong quá trình xử lý dữ liệu. Giờ chúng ta sẽ cùng đi qua một ví dụ tổng hợp hơn để cùng nhau áp dụng các kiến thức đã học được.
 Chúng ta sẽ sử dụng dữ liệu về các khoản vay của khách hàng để làm ví dụ tổng hợp cho phần này. 
@@ -497,9 +497,9 @@ Với dữ liệu về dư nợ của khách hàng, các bạn có một số c�
   4. Lọc ra thông tin về khoản vay có gía trị > 5 triệu
   5. Tổng hợp dữ liệu theo nhóm nợ, theo tên sản phẩm về: số lượng khách hàng, tổng dư nợ và số lượng ngày quá hạn bình quân cho tất cả các khách hàng và cho các khách hàng có khoảng vay lớn hơn 30 triệu.
   
-# Các hàm nâng cao trong dplyr
+# 4.Các hàm nâng cao trong dplyr
 
-## Hàm điều kiện phân nhóm
+## 4.1.Hàm điều kiện phân nhóm
 
 Chắc hẳn trong quá trình phân tích và xử lý dữ liệu, chúng ta sẽ tạo thêm các trường mới hoặc tính toán dữ liệu dựa vào từng điều kiện khác nhau để đưa ra giá trị của trường hoặc cách tính cho dữ liệu. Ví dụ: nhóm tuổi của khách hàng (KH) được tính dựa vào độ tuổi trong các khoảng như: <= 18 tuổi sẽ là "nhóm 1", từ 18-25 là "nhóm 2", từ 25-35 là "nhóm 3"... hay xếp loại sinh viên dựa vào điểm số như < 5 là "kém", từ 5-7 là "khá", từ 7-9 là "giỏi", từ 9-10 là "xuất sắc". Hoặc trong kinh doanh, bạn muốn tính thưởng cho KH thì sẽ phải dùng nhiều công thức khác nhau như KH thuộc VIP sẽ nhân 1 tỷ lệ, KH medium 1 tỷ lệ khác, hay KH thông thường thì sẽ 1 tỷ lệ khác.... Chúng ta sẽ cùng đi qua một vài ví dụ để nắm được hàm xử dụng trong dpyr.
 
@@ -537,7 +537,7 @@ a %>%
          )
 ```
 
-## Hàm gộp các hai bảng dữ liệu
+## 4.2.Hàm gộp các hai bảng dữ liệu
 
 Trong R base, chúng ta thường dùng hàm merge() để gộp 2 bảng dữ liệu với nhau dựa vào 1 hoặc nhiều  trường dữ liệu giống nhau. Trong gói dplyr, chúng ta có các hàm riêng biệt được sử dụng cho mục đích này, tuy thuộc vào kết quả đầu ra mà chúng ta mong muốn. Chúng ta sẽ đi qua 4 hàm cơ bản của dplyr và so sách với hàm merge() trong R base. 
 
@@ -657,7 +657,7 @@ x %>%
 ```
 
 
-# Ví dụ tổng hợp
+# 5.Ví dụ tổng hợp
 
 Trong ví dụ này, chúng ta sẽ bổ sung thêm thông tin về chi nhánh (branch), và thông tin về khách hàng (customer) để biết thêm các chiều thông tin khác nhau của các khoản vay của khách hàng.
 ```r
