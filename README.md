@@ -1,20 +1,30 @@
-
 # 1.Giới thiệu
 
-Gói dplyr là gói được sử dụng phổ biến nhất trên R với những tính năng chuyên cho việc xử lý, tổng hợp dữ liệu trước khi xây dựng model phân tích dữ liệu. Bài giảng ngày hôm nay được xây dựng để  hỗ trợ người dùng R có được cái nhìn tổng thể về khả năng tổng hợp và xử lý dữ liệu của R thông quan gói dplyr. Bài giảng cũng sẽ lồng ghép các hàm cơ bản trên R để người dùng có được cái nhìn khách quan hơn về các hàm trong gói dplyr.
-Trước khi bắt đầu nội dung bài giảng, chúng ta có thể download và gọi gói dplyr.
+`tidyverse` là tổ hợp các thư viện (package/library) được sử dụng trên R với những tính năng chuyên cho việc xử lý, tổng hợp dữ liệu, trực quan hóa dữ liệu (visualization). Bài viết này chúng ta sẽ cùng đi qua các phương pháp xử lý, tổng hợp dữ liệu cở bản và nâng cao sử dụng các thư viên như: dppyr, tidyr và reshap2. Ngoài ra, các bạn cũng sẽ được giới thiệu về pipeoperator là phương pháp sâu chuỗi các thao tác xử lý dữ liệu với nhau thành dây chuyền thay vì phải chia nhỏ ra thành nhiều bước hoặc sử dụng nhiều đóng mở ngoặc (nested). Việc sử dụng pipeoperator cũng giúp cho việc đọc code được dễ dàng hơn.
+
+Chúng ta cần tải thư viện về trước khi sử dụng, ở đây, cho pipeoperator, chúng ta sẽ dùng pipeR thay vì sử dụng pipeoperator của dplyr (magrittr). Pipeoperator của pipeR thật sự ưu việt hơn rất nhiều so với phần còn lại trong R.
+
 ```r
-#install.packages("dplyr")
-library(dplyr)
-library(magrittr)
+#install.packages(c("tidyverse", "pipeR"))
+library(tidyverse)
+library(pipeR)
 ```
 
-# 2.Giới thiệu về pipe operator
-Pipe operator (%>%) là khái niệm về việc viết code theo cách đơn giản và dễ theo dõi giúp cho người đọc và người viết code trên R có thể theo dõi được code một cách dễ dàng nhất. Trên R, thông thường người dùng sẽ viết code dưới dạng trong ngoặc (nested), và cấu trúc câu lệnh sẽ phức tạp khi có nhiều thao tác tính toán, biến đổi (hàm) được xử dụng để trả về kết quả cuối cùng. Khái niệm pipe operator được khởi xướng từ gói magrittr với nhiều tính năng hữu dụng, hỗ trợ người viết code có thể viết code trên R được hiệu quả và dễ theo dõi hoặc sửa trong quá trình chạy và update code.  Gói dplyr có ứng dụng một số tính năng cơ bản của pipe operator, cụ thể là cấu trúc %>% với một số tính năng cơ bản của pipe operator từ gói magrittr. Pipe operator được giới thiệu trong bài giảng này sẽ chỉ dừng lại ở phạm vi ứng dụng trong gói dplyr, các tính năng khác của pipe operator, bạn đọc có thể tìm hiểu trong tài liệu của gói magrittr .
+# 2. Nội dung chính
+Chúng ta sẽ chia nội dung thành 3 phần chính:
+
+1. Giới thiệu về pipe operator vs pipeR
+2. Các phương pháp biến đổi dữ liệu với dyplyr
+3. Các phương pháp biến đổi dữ liệu với tidyer và reshape2
+
+## Giới thiệu về pipe operator
+
+Pipe operator (%>%) là khái niệm về việc viết code theo cách đơn giản và dễ theo dõi giúp cho người đọc và người viết code trên R có thể theo dõi được code một cách dễ dàng nhất. Trên R, thông thường người dùng sẽ viết code dưới dạng trong ngoặc (nested), và cấu trúc câu lệnh sẽ phức tạp khi có nhiều thao tác tính toán, biến đổi (hàm) được xử dụng để trả về kết quả cuối cùng. Khái niệm pipe operator được khởi xướng từ gói magrittr với nhiều tính năng hữu dụng, hỗ trợ người viết code có thể viết code trên R được hiệu quả và dễ theo dõi hoặc sửa trong quá trình chạy và update code.  Gói dplyr có ứng dụng một số tính năng cơ bản của pipe operator, cụ thể là cấu trúc %>% với một số tính năng cơ bản của pipe operator từ gói magrittr. 
 
 Ví dụ đơn giản của %>%:
 ```r
 x <- seq(2, 100, 2)
+
 # Tính độ lệch chuẩn
 sqrt(sum((x-mean(x))^2)/(length(x)-1))
 sd(x)
@@ -122,9 +132,9 @@ x %>%
 
 Tất nhiên, *lamda* trong gói dplyr chỉ thực sự hữu dụng khi chúng ta dùng hàm này một lần và không muốn mất công tạo một hàm mới, nếu hàm được sử dụng nhiều lần thì cách tốt nhất là định nghĩa hàm, sau đó dùng %>% để truyền biến vào hàm. 
 
-# 3.Các hàm cơ bản trong dplyr
+## Các hàm cơ bản trong dplyr
 
-## 3.1.Lấy dữ liệu mẫu từ bảng dữ liệu
+### Lấy dữ liệu mẫu từ bảng dữ liệu
 Khi tiếp cận với một bảng dữ liệu, phần lớn người phân tích và xử lý dữ liệu thường làm thao tác đầu tiên là quan sát các giá trị mẫu của dữ liệu. Trong R Base, chắc hẳn các bạn đều dùng hàm head() và tail() để nhặt ra một số dòng đầu tiên  và cuối cùng của dữ liệu.
 ```r
 mtcars %>% head(5) # lấy 5 dòng đầu của dữ liệu
@@ -140,7 +150,7 @@ iris %>% sample_frac(.1) # lấy 10 % tổng số dòng có trong bảng iris
 Ngoài việc nhìn nhanh các thông tin trên bảng dữ liệu mà bạn muốn phân tích, hai hàm trên cũng hỗ trợ bạn trong việc lấy dữ liệu mẫu của một bảng dữ liệu để phân tích hoặc xây dựng mô hình. 
 
 
-## 3.2.Lọc dữ liệu theo điều kiện
+### Lọc dữ liệu theo điều kiện
 
 Thường xuyên trong quá trình xử lý và phân tích dữ liệu, người dùng sẽ phải lọc dữ liệu theo điều kiện nào đó, ví dụ lấy danh sách khách hàng nam có độ tuổi từ 35 trở lên, lấy các hợp đồng có giá trị từ 10 triệu trở lên hay đại loại vậy. Trong gói dplyr, hàm filter() và hàm slice() được sử dụng để làm công việc này.
 ```r
@@ -228,7 +238,7 @@ mtcars %>%
 ```
 
 
-## 3.3.Sắp xếp dữ liệu
+### Sắp xếp dữ liệu
 
 Ngoài việc lọc dữ liệu có điều kiện, chúng ta cũng thường xuyên thực hiện việc sắp xếp dữ liệu theo một trật tự nhất định nào đó khi xem dữ liệu. Hàm arrange() hỗ trợ công việc này. 
 ```r
@@ -257,7 +267,7 @@ mtcars %>%
 ```
 
 
-## 3.4.Lấy dữ liệu theo trường thông tin mong muốn
+### Lấy dữ liệu theo trường thông tin mong muốn
 
 Khi bạn cần lấy chi tiết các trường thông tin nào trong bảng dữ liệu, bạn có thể dùng hàm select() để nhặt chi tiết các trường. Hàm select() tương đồng với tham số select trong hàm subset().
 ```r
@@ -335,7 +345,7 @@ mtcars %>%
 ```
 
 
-## 3.5.Lọc các giá trị duy nhất
+### Lọc các giá trị duy nhất
 
 Đôi khi, bạn chỉ muốn nhặt ra các giá trị duy nhất trong bảng dữ liệu. Để làm được việc này bạn có thể dùng hàm distinct(), hàm này tương đồng với hàm unique() trong R base.
 ```r
@@ -356,7 +366,7 @@ mtcars[, c("vs", "gear")] %>%
 Sự khác biệt rõ ràng nhất giữa distinct() và unique() mà các bạn có thể quan sát ở trên là với hàm unique(), chúng ta bắt buộc phải liệt kê rõ ràng vector hoặc bảng dữ liệu nào cần lấy danh sách giá trị duy nhất. Trong khi đó, với distinct() bạn có thể tìm danh sách các giá trị duy nhất của 1 cột, hoặc nhiều cột từ một bảng dữ liệu nào đó.
 
 
-## 3.6.Tạo mới trường dữ liệu
+### Tạo mới trường dữ liệu
 
 Trong quá trình xử lý dữ liệu, rất nhiều lúc bạn muốn tạo thêm các trường dữ liệu mới (trường dữ liệu phát sinh) dựa vào công thức có liên quan đến các trường dữ liệu hiện tại (business rules). Hàm mutate() được sử dụng để làm công việc này. Trong R base, chúng ta cũng có thể thực hiện được yêu cầu này với hàm transform(), tuy nhiên với năng lực có phần hạn chế hơn, chúng ta sẽ đi qua ví dụ để làm rõ ý này.
 ```r
@@ -426,7 +436,7 @@ mtcars %>%
   head
 ```
 
-## 3.7.Tổng hợp các chỉ tiêu dữ liệu
+### Tổng hợp các chỉ tiêu dữ liệu
 
 Trong quá trình xử lý dữ liệu, rất nhiều khi bạn phải tổng hợp dữ liệu theo các cách như: tính tổng, tính số dư bình quân, phương sai, tổng số lượng quan sát... Trong gói dplyr, bạn có thể sử dụng hàm summarise() để thực hiện công việc này.
 ```r
@@ -464,7 +474,7 @@ admissions %>%
 Kết qủa trên cho chúng ta cái nhìn chi tiết hơn về tổng số lượng sinh viên ứng tuyển, số lượng sinh viên ứng tuyển bình quân và độ lệch chuẩn của số lượng sinh viên được chia theo giới tính và kết quả xét tuyển của trường (nhận, không nhận).
 
 
-## 3.8.Ví dụ tổng hợp
+### Ví dụ tổng hợp
 
 Vừa rồi chúng ta đã đi qua những hàm cơ bản trong dplyr được sử dụng thường xuyên trong quá trình xử lý dữ liệu. Giờ chúng ta sẽ cùng đi qua một ví dụ tổng hợp hơn để cùng nhau áp dụng các kiến thức đã học được.
 Chúng ta sẽ sử dụng dữ liệu về các khoản vay của khách hàng để làm ví dụ tổng hợp cho phần này. 
@@ -497,9 +507,9 @@ Với dữ liệu về dư nợ của khách hàng, các bạn có một số c�
   4. Lọc ra thông tin về khoản vay có gía trị > 5 triệu
   5. Tổng hợp dữ liệu theo nhóm nợ, theo tên sản phẩm về: số lượng khách hàng, tổng dư nợ và số lượng ngày quá hạn bình quân cho tất cả các khách hàng và cho các khách hàng có khoảng vay lớn hơn 30 triệu.
   
-# 4.Các hàm nâng cao trong dplyr
+## Các hàm nâng cao trong dplyr
 
-## 4.1.Hàm điều kiện phân nhóm
+### Hàm điều kiện phân nhóm
 
 Chắc hẳn trong quá trình phân tích và xử lý dữ liệu, chúng ta sẽ tạo thêm các trường mới hoặc tính toán dữ liệu dựa vào từng điều kiện khác nhau để đưa ra giá trị của trường hoặc cách tính cho dữ liệu. Ví dụ: nhóm tuổi của khách hàng (KH) được tính dựa vào độ tuổi trong các khoảng như: <= 18 tuổi sẽ là "nhóm 1", từ 18-25 là "nhóm 2", từ 25-35 là "nhóm 3"... hay xếp loại sinh viên dựa vào điểm số như < 5 là "kém", từ 5-7 là "khá", từ 7-9 là "giỏi", từ 9-10 là "xuất sắc". Hoặc trong kinh doanh, bạn muốn tính thưởng cho KH thì sẽ phải dùng nhiều công thức khác nhau như KH thuộc VIP sẽ nhân 1 tỷ lệ, KH medium 1 tỷ lệ khác, hay KH thông thường thì sẽ 1 tỷ lệ khác.... Chúng ta sẽ cùng đi qua một vài ví dụ để nắm được hàm xử dụng trong dpyr.
 
@@ -537,7 +547,7 @@ a %>%
          )
 ```
 
-## 4.2.Hàm gộp các hai bảng dữ liệu
+### Hàm gộp các hai bảng dữ liệu
 
 Trong R base, chúng ta thường dùng hàm merge() để gộp 2 bảng dữ liệu với nhau dựa vào 1 hoặc nhiều  trường dữ liệu giống nhau. Trong gói dplyr, chúng ta có các hàm riêng biệt được sử dụng cho mục đích này, tuy thuộc vào kết quả đầu ra mà chúng ta mong muốn. Chúng ta sẽ đi qua 4 hàm cơ bản của dplyr và so sách với hàm merge() trong R base. 
 
@@ -657,7 +667,7 @@ x %>%
 ```
 
 
-# 5.Ví dụ tổng hợp
+## Ví dụ tổng hợp
 
 Trong ví dụ này, chúng ta sẽ bổ sung thêm thông tin về chi nhánh (branch), và thông tin về khách hàng (customer) để biết thêm các chiều thông tin khác nhau của các khoản vay của khách hàng.
 ```r
@@ -742,3 +752,258 @@ loan_sum %>%
   labs(x = "So luong khach hang", y = "Tong du no") 
 ```
   
+## Xoay chiều dữ liệu vs tidyer và reshape2
+
+### Gộp dữ liệu theo trục (unpivot table)
+
+Khái niệm gộp dữ liệu theo trục là việc gộp và tổng hợp dữ liệu của nhiều cột dữ liệu vào thành một cột chung chứa giá trị của các cột này hoặc giá trị tổng hợp từ các cột này. Một trong những lợi ích lớn nhất của việc gộp dữ liệu theo trục là hỗ trợ người phân tích dữ liệu trong việc vẽ đồ thị. Nếu bạn đã sử dụng gói ggplot2 để vẽ đồ thì, bạn sẽ thấy việc gộp dữ liệu là điều bạn cần làm trước khi vẽ bất kỳ đồ thị nào. Trong gói tidyr, chúng ta có hàm gather(), còn trong gói reshape2 chúng ta có hàm melt(). Tính năng và ứng dụng của 2 hàm này phụ thuộc vào mục đích sử dụng của người dùng.
+
+Giả sử chúng ta có dữ liệu về điểm số của sinh viên như sau:
+```r
+# Tạo dữ liệu sample:
+StudentID <- c("1004", "1897", "1234", "1123", "1345", "1542", "1236", "7894", "6548", "7894")
+Name <- c("Nam", "Hai", "Long", "Nguyet", "Nhat", "Nhung", "Huyen", "Duc", "Vu", "Giang")
+Gender <- c("M", "F", "M", "F", "F", "F", "F","M", "M", "M")
+English <- c(9, 8, 5, 7.5, 6, 6.5, 8.3, 4.5, 10, 5)
+Maths <- c(10, 9, 8.9, 7, 6, 9.7, 7.8, 8.7, 7, 7.5)
+History <- c(8, 7, 6, 5, 8.9, 6.5, 8.5, 7.2, 8.9, 9)
+Status <- c("P", "P", "F", "F", "P", "P","P", "F", "P", "F")
+score <- data.frame(StudentID, Name, Gender, English, Maths, History, Status)
+```
+Bây giờ chúng ta chỉ muốn tổng hợp dữ liệu về điểm số của sinh viên thành một cột dữ liệu theo từng sinh viên, và có một cột dữ liệu về tên môn học để nhận biết điểm của môn nào, chúng ta có thể dùng hàm gather() của gói tidyr. Hàm gather() có cấu trúc: gather(data, key, value, ...), trong đó:
+
+- data: bảng dữ liệu cần gộp
+- key: cột dữ liệu mới được tạo ra để lưu tên các cột được gộp
+- value: cột dữ liệu mới được tạo ra để lưu giá trị của các cột được gộp tương ứng
+- ...: chi tiết tên các cột được gộp.
+
+Với cấu trúc trên, hày cùng nhau gộp dữ liệu score:
+```r
+score_gather <- score %>%
+  gather(key = "Subject" # đặt tên cột chứa các môn học là Subject
+         , value = "Score" # đặt tên cột chứa giá trị điểm các môn là Score
+         , c(English, Maths, History) # liệt kê các cột được gộp với nhau
+         )
+score_gather
+library(ggplot2)
+score_gather %>%
+  ggplot(aes(StudentID, Score)) + 
+  geom_bar(aes(fill = Subject), stat = "identity", position = "dodge")
+```
+
+Như vậy thông tin về điểm thi đã được gộp với nhau để tiện cho việc quan sát cũng như vẽ đồ thị.
+
+Tương tự như hàm gather(), hàm melt() trong gói reshape2 cũng làm công việc tương tự. Hàm melt() có cấu trúc: melt(data, id.vars, measure.vars, variable.name = "variable", value.name, ...), trong đó:
+
+- data: bảng dữ liệu cần gộp
+- id.vars: là vector của các cột dữ liệu được giữ nguyên
+- measure.vars: là vector của các cột được gộp
+- variable.name: là tên của cột được sử dụng để lưu tên các cột được gộp
+- value.name: laf tên của cột lưa giá trị của các cột được gộp
+```r
+score_melt <- score %>%
+  melt(id.vars = c("StudentID", "Name", "Gender", "Status") # các cột này được giữ nguyên
+       , measure.vars = c("English", "Maths", "History") # các cột được gộp với nhau
+       , variable.name = "Subject"
+       , value.name = "Score"
+      )
+score_melt
+```
+
+Có thể thấy score_melt và score_gather không khác nhau về cấu trúc và giá trị các ô dữ liệu. Hai hàm gather() và melt() đều trả về giá trị giống nhau nhưng cấu trúc có phần khác biệt nhau. Bạn có thể thấy hàm melt() có cấu trúc chi tiết hơn so với hàm gather(). Tuy nhiên, với cách thức của hàm melt() cho ta sự lựa chọn trong việc nhặt chi tiết các trường dữ liệu được giữ nguyên (chiều thông tin). Chỉ các trường thông tin được chọn này sẽ được lưu lại trên bảng dữ liệu mới.
+
+Ví dụ khác: sử dụng dữ liệu iris, gộp các trường thông tin về chiều dài và chiều rộng của đài hoa và cánh hoa, đặt tên các thông tin này là Indicator còn cột lưu số liệu là Value:
+```r
+head(iris)
+iris %>%
+  gather("Indicator", "Value", -Species) %>%
+  head
+iris %>%
+  melt(id.vars = "Species", measure.vars = c("Sepal.Length", "Petal.Length", "Sepal.Width", "Petal.Width"), variable.name = "Indicator", value.name = "Value") %>%
+  head
+```
+
+Trong R base chúng ta có thể dùng hàm stack() để thực hiện công việc trên. Tuy nhiên, nếu chỉ thực hiện với hàm stack, chung ta sẽ nhận được kết quả không được như mong muốn do stack() chỉ hỗ trợ gộp các cột dữ liệu lại với nhau:
+```r
+score %>%
+  stack(select = c("English", "History", "Maths"))
+```
+
+Đây chắc chắn không phải là kết quả mà bạn mong muốn. Để được kết quả tương tự như hàm melt() hoặc gather() đã làm, chúng ta sẽ kết hợp với hàm cbind() với stack() để thực hiện công việc trên:
+```r
+score %>%
+  stack(select = c("English", "History", "Maths")) %>%
+  cbind(score[, c("StudentID", "Name", "Gender", "Status")])
+```
+
+
+### Xoay dữ liệu theo trục (pivot table)
+
+Khái niệm xoay dữ liệu theo trục có thể rất quen thuộc với nhiều bạn đọc, đặc biết với những ai đã và đang sử dụng Excel với pivot table. Xoay dữ liệu theo trục cho phép người dùng có thể nhìn dữ liệu theo nhiều sâu với cách thức tổng hợp dữ liệu khác nhau như: số lượng, tổng giá trị, giá trị bình quân, giá trị lớn nhất, nhỏ nhất... Trong R, với cả gói tidyr và reshape2, chúng ta có thể làm công việc tương tự với các hàm spread() và dcast() tương ứng.
+
+Hàm spread() trong tidyr có cấu trúc như sau: spread(data, key, value, fill = NA, ...), trong đó:
+
+- data: bảng dữ liệu thực hiện xoay chiều
+- key: cột dữ liệu được sử dụng để phân rã ra nhiều cột
+- value: tên của cột được sử dụng để điền các giá trị tương ứng cho các cột phân rã
+- fill: nếu không có giá trị thì sẽ được thay thế bẳng giá trị tương ứng, mặc định là NA nếu không được nêu rõ.
+
+Ví dụ:
+```r
+score_gather %>%
+  spread(Subject, Score)
+```
+
+Với hàm spread(), chúng ta chỉ có thể duỗi dữ liệu ra từ dạng cột sang dạng hàng khi một cột dữ liệu chứa thông tin theo chiều các môn học được duỗi ra thành nhiều cột khác nhau, từng cột mới tương ứng với từng môn học và điểm của các môn học. Nếu chúng ta muốn nhìn dữ liệu với các chỉ số khác nhau như số dư trung bình, tổng số, số lượng vv... thì spread() sẽ không thể đáp ứng được những yêu cầu này. Tuy nhiên, với hàm dcast() từ gói reshape2, chúng ta có thể làm được công việc này.
+Hàm dcast() có cấu trúc: dcast(data, formula, fun.aggregate = NULL, ...), trong đó:
+
+- data: bảng dữ liệu cần xoay chiều
+- formula: công thức thực hiện xoay chiều, có 2 về và được phân tách với nhau bởi dấu ~. Vế bên tay trái là các cột được giữ nguyên. Vế tay phải là các cột được xoay trục
+- fun.aggregate: hàm đượ sử dụng để tổng hợp dữ liệu trong quá trình xoay trục như: tổng số, số lượng, số trung bình...
+
+Với dữ liệu score_melt đã được xử lý vừa rồi, nếu chúng ta chỉ đơn thuần muốn duỗi dữ liệu ra thành nhiều cột mà không thực hiện việc tính toán, tổng hợp dữ liệu, thì tham số về hàm tổng hợp (fun.aggregate) sẽ không sử dụng:
+```r
+score_melt %>%
+  dcast(formula = StudentID + Name + Gender + Status ~ Subject)
+```
+
+Nếu chúng ta muốn duỗi nhiều trường dữ liệu với nhau, ví dụ điểm môn + trượt/đỗ, chúng ta có thể làm bằng cách bổ sung trường vào vế tay phải của công thức (formula):
+```r
+score_melt %>%
+  dcast(StudentID + Name + Gender ~ Subject + Status, fill = "")
+```
+
+Số lượng cột được sinh mới (xoay trục) sẽ là tích của số lượng các giá trị duy nhất của từng cột được xoay trục. Ở đây là 6 (3 * 2) (có 3 môn, 2 trạng thái). Trong code phía trên, chúng ta có thể dùng thêm tham số fill (mặc định là NA) để điền giá trị vào cho những ô dữ liệu không có giá trị (ở đây chúng ta để các giá trị này là trống - "").
+
+Giờ chúng ta muốn thực hiện việc xoay trục dữ liệu, đồng thời thực hiện các tính toán về dữ liệu như tính tổng, tổng số lượng hoặc số trunh bình, chúng ta có thể làm như sau:
+```r
+library(dplyr)
+loan <- read.csv("C:/Users/ddpham/Downloads/FactLoan.csv", sep = ",", header = T)
+names(loan) <- tolower(names(loan))
+loan <- distinct(loan) # lấy các dòng dữ liệu duy nhất của bảng dữ liệu
+```
+
+- Tính tổng số dư chi tiết cho từng sản phẩm, theo từng chi nhánh:
+```r
+pro_sum <- loan %>%
+  select(branch_id, pro_name, balance) %>% # nhặt các trường branch_id, pro_name và balance cho việc xoay trục dữ liệu   
+  dcast(branch_id ~ pro_name, fun.aggregate = sum)
+head(pro_sum)
+```
+
+Kiểm tra lại kết quả với sản phẩm Others cho chi nhánh VN10116:
+```r
+loan %>%
+  filter(branch_id == "VN10116", pro_name == "Others") %>%
+  select(balance) %>%
+  sum
+```
+
+- Tính số lượng khách hàng chi tiết cho từng sản phẩm, theo từng chi nhánh:
+```r
+pro_count <- loan %>%
+  select(cust_no, branch_id, pro_name) %>%
+  dcast(branch_id ~ pro_name, length)
+head(pro_count)
+```
+
+chúng ta có thể check kết quả ở trên với 1 ví dụ nhỏ cho sản phẩm Mortgage và với chi nhánh VN10114, có 4 khách hàng:
+```r
+loan %>%
+  filter(branch_id == 'VN10114', pro_name == 'Mortgage')
+```
+
+- Tính số dư trung bình cho từng sản phẩm, theo từng chi nhánh:
+```r
+pro_mean <- loan %>%
+  select(branch_id, pro_name, balance) %>%
+  dcast(branch_id ~ pro_name, mean)
+head(pro_mean)
+```
+
+- Chúng ta cũng có thể tính các giá trị khác như: độ lệch chuẩn(sd); phương sai (vars); giá trị lớn nhất-nhỏ nhất (max-min)...
+
+*lưu ý*: hàm dcast mặc định fun.aggregate là hàm length() nếu trong tình huống mà tham số fun.aggregate không được bổ sung trong hàm.
+
+### Bổ sung dữ liệu trống/giá trị trắng (NA)
+
+Trong quá trình tổng hợp dữ liệu, nhiều trường hợp dữ liệu tổng hợp bị trống hoặc trắng do dữ liệu không có hoặc dữ liêu đầu vào bị thiếu. Như ví dụ ở trên khi chúng ta tính toán số dư trung bình của các sản phẩm cho vay theo chi nhánh sẽ có một số sản phẩm không bán được tại chi nhánh nào đó, khiến số liệu đưa ra bị NA. Tuy nhiên, chúng ta lại không muốn để NA và muốn thay thế bằng giá trị nào đó thích hợp với hoàn cảnh. Để làm được việc này, chúng ta sẽ dùng một trong 2 hàm replace_na() trong gói tidyr.
+
+Giả sử chúng ta muốn thay thế giá trị NA bằng 0, chúng ta có thể làm như sau:
+```r
+loan %>%
+  select(branch_id, pro_name, balance) %>%
+  dcast(branch_id ~ pro_name, mean) %>%
+  replace_na(list(Auto = 0, Others = "Khong gia tri")) %>%
+  head
+```
+
+Với hàm replace_na(), chúng ta phải liệt kê các trường cần thay thế giá trị NA bằng một list(danh sách các cột cần thay thế). Các trường thông tin còn lại không nằm trong list() này sẽ không được thay thế.
+
+### Tách và gộp các cột dữ liệu với nhau
+
+Rất nhiều khi trong quá trình tổng hợp dữ liệu, chúng ta muốn tách một cột dữ liệu ra thành nhiều cột dữ liệu hoặc ngược lại muốn gộp nhiều trường dữ liệu lại với nhau thành một cột dữ liệu duy nhất. 
+Để thực hiện việc tách một trường dữ liệu ra thành nhiều trường, chúng ta sẽ dùng hàm separate() trong gói tidyr hoặc hàm colsplit() trong gói reshape2. Có sự khác biệt nhất định giữa 2 hàm này, chúng ta sẽ đi chi tiết ở dưới.
+Hàm separate() có cấu trúc: separate(data, col, into, sep = "[^[:alnum:]]+", ...), trong đó:
+
+- data: bảng dữ liệu có cột cần tách
+- col: tên cột dữ liệu cần tách
+- into: vector tên các cột mới sẽ được tạo ra từ cột bị tách
+- sep: ký tự đặc biệt dùng để tách cột 
+
+*lưu ý*: ký tự đặc biệt dùng để tách là ký tự có trong cột cần tách, người dùng hiểu đây chính là ký tự ngăn cách các nhóm giá trị cần tách trong cột dữ liệu ban đầu. Từng nhóm ký tự này sẽ trở thành các cột dữ liệu mới sau khi được tách ra sử dụng hàm separate().
+
+Ví dụ:
+```r
+score_new <- data.frame(StudentInfo = paste(StudentID, Name, Gender, sep = "#"), English, History, Maths)
+score_new %>%
+  separate(StudentInfo, into = c("StudentID", "Name", "Gender"), sep = "#")
+```
+
+Tình huống trên là tương đối đơn giản khi các trước thông tin được ngăn cách với nhau bằng một ký tự đặc biệt duy nhất. Trên thực tế, khi bạn tiếp xúc với nhiều loại dữ liệu sẽ không thể trách việc các trường dữ liệu được ngăn cách với nhau bằng nhiều ký tự khác nhau hoặc trường thông tin chưa nhiều hơn thôn tin mà bạn cần... Ví dụ sau là một trong những trường hợp đó.
+```r
+Phone <- paste("091", (rnorm(10, 1, 10)  * 123456) %>% round(0) %>% abs, sep = "")
+score_new1 <- data.frame(StudentInfo = paste(StudentID, Name, sep = "-") %>% paste(paste(Gender, Phone, sep = ""), sep = "#")
+                         , English
+                         , History
+                         , Maths)
+head(score_new1)
+```
+
+Trong ví dụ này, dữ liệu về sinh viên có hơn 2 ký tự đặc biệt ngăn cách các cột dữ liệu và có thểm thông tin về số điện thoại của sinh viên nhưng lại không có ngăn cách giữa số đt và giới tính của sinh viên. Để tách được dữ liệu như mong muốn, chúng ta sẽ làm như sau:
+```r
+score_new1 %>%
+  separate(StudentInfo, into = c("StudentID", "Name", "Gender"), sep = "[-#]") %>%
+  separate(Gender, into = "Gender_New", sep = "[[:digit:]]+")
+```
+
+*Diễn giải*: Trong ví dụ này, chúng ta phải thực hiện việc tách trường dữ liệu thành 2 lần, trong đó, lần 1 chúng ta tách ra thành 3 cột: StudentID, Name, Gender, các cột này được ngăn cách với nhau bằng ký tự "-" hoặc "#". Các ký tự "[-#]" có nghĩa là "-" hoặc "#". Sau đó, chúng ta tiếp tục tách trường Gender ra để chỉ lấy ký tự chữ của cột này bằng cách loại bỏ toàn bộ ký tự số. Chuỗi ký tự "[[:digit:]]+" có nghĩa là chuối các ký tự dạng số (digit) và có số lượng ký tự không giới hạn và > 1. Chúng ta sẽ đi qua các ký tự này với bài viết về xử lý dữ liệu dạng chữ.
+
+Trong gói reshape2 chúng ta cũng có thể dùng hàm colsplit() với cấu trúc: colsplit(string, pattern, names), trong đó:
+
+- string: vector các ký tự cần tách
+- pattern: ký tự ngăn cách
+- names: vector tên của các cột mới
+
+Các bạn có thể thấy sự khác biệt khá lớn giữa separate() và colsplit() ở đây  chính là dữ liêu đầu vào của hàm. Với separate() thì dữ liệu đầu vào là bảng dữ liệu, trong đó, colsplit() sẽ là vector ký tự, hay chính là cột dữ liệu cần tách. Như vậy colsplit() sẽ kếm linh động hơn so với separate(). Với colsplit(), chúng ta có thể tách score_new như sau:
+
+colsplit(string = score_new$StudentInfo, pattern = "#", names = c("StudentID", "Name", "Gender")) %>% 
+  cbind(score_new[, -1]) # gộp với các cột còn lại (khác cột StudentInfo) để lấy được dữ liệu đầy đủ
+
+
+Hàm colsplit sẽ thích hợp với vector ký tự hơn do đặc tính dữ liệu đầu vào của hàm. Trong khí đó, separate() có thể linh động hơn và được dùng nhiều cho dữ liệu dạng bảng biểu.
+
+
+Trong tình huống ngược lại, nhiều khi bạn sẽ muốn gộp các trường thông tin lại với nhau thành một cột dữ liệu chung. Để làm được việc này, chúng ta sẽ sử dụng hàm unite() trong gói tidyr. Hàm unite() có cấu trúc: unite(data, col, ..., sep = "_", remove = TRUE), trong đó:
+
+- data: bảng dữ liệu cần gộp các trường lại với nhau
+- col: tên trường dữ liệu mới sau khi gộp các trường lại với nhau
+- ...: tên các cột dữ liệu cần gộp với nhau
+- sep: ký tự đặc biệt dùng để ngăn cách các trường với nhau
+- remove: có hay không loại bỏ các cột được gộp với nhau, mặc định là có (TRUE), nếu FALSE thì kết quả sẽ thể hiện cả các cột đã bị gộp
+
+Giờ hãy cùng nhau gộp các cột thông tin về sinh viên lại với nhau:
+```r
+score %>%
+  unite(col = StudentInfo, StudentID, Name, Gender, sep = "~", remove = FALSE)
+```
