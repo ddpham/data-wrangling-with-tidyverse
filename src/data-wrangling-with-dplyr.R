@@ -1,15 +1,9 @@
-#+++++++++++++++++++++++++++++++++
-# 1 dpplyr library:
-#+++++++++++++++++++++++++++++++++
 
-#install.packages("dplyr")
-# pck <- c("dplyr", "magrittr")
-# sapply(pck, require, character.only = T)
-pkgs <- c('PipeR', "tidyverse")
-sapply(pkgs, require, character.only=T)
+#install.packages("tidyverse")
+library(tidyverse)
 
 #+++++++++++++++++++++++++++++++++
-# 2 Pipe operator
+# 1. Pipe operator
 #+++++++++++++++++++++++++++++++++
 ## Ví dụ 1:
   x <- seq(2, 100, 2)
@@ -81,9 +75,9 @@ sapply(pkgs, require, character.only=T)
     })
 
 #+++++++++++++++++++++++++++++++++
-# 3 dplyr Các hàm cơ bản
+# 2 dplyr Các hàm cơ bản
 #+++++++++++++++++++++++++++++++++
-##3.1 Lấy dữ liệu từ bảng mẫu:
+##2.1 Lấy dữ liệu từ bảng mẫu:
   
   mtcars %>% head(5) # lấy 5 dòng đầu của dữ liệu
   mtcars %>% tail(5) # lấy 5 dòng cuối của dữ liệu
@@ -92,7 +86,7 @@ sapply(pkgs, require, character.only=T)
   mtcars %>% sample_n(10) # lấy 10 dòng dữ liệu ngẫu nhiên trong bảng mtcars - tương đương với cấu trúc: "SELECT TOP 10 * FROM MTCARS" trong SQL.
   iris %>% sample_frac(.1) # lấy 10 % tổng số dòng có trong bảng iris
 
-##3.2 Lọc dữ liệu theo điều kiện
+##2.2 Lọc dữ liệu theo điều kiện
   #Trong gói dplyr, hàm filter() và hàm slice() được sử dụng để làm công việc lọc dữ liệu 
   
   filter(mtcars, mpg >= 21, cyl == 6)
@@ -163,7 +157,7 @@ sapply(pkgs, require, character.only=T)
     mtcars %>%
       slice(order(.$qsec) %>% head) # sắp xếp lại dữ liệu mtcars theo cột qsec sau đó lấy 6 dòng dữ liệu (có giá trị qsec cao nhất)
     
-##3.3 Sắp xếp dữ liệu
+##2.3 Sắp xếp dữ liệu
 
   #Ngoài việc lọc dữ liệu có điều kiện, chúng ta cũng thường xuyên thực hiện việc sắp xếp dữ liệu theo một trật tự nhất định nào đó khi xem dữ liệu. 
   #Hàm arrange() hỗ trợ công việc này.
@@ -185,7 +179,7 @@ sapply(pkgs, require, character.only=T)
     filter(mpg %>% between(19, 21)) %>%
     arrange(vs, gear %>% desc) # lấy dữ liệu từ mtcars thỏa mãn: mpg từ 19 đến 21, sau đó dữ liệu được sắp xếp lần lượt theo cột vs (tăng dần) và cột gear (giảm dần)
 
-##3.4 Lấy dữ liệu theo trường thông tin mong muốn
+##2.4 Lấy dữ liệu theo trường thông tin mong muốn
   #Khi bạn cần lấy chi tiết các trường thông tin nào trong bảng dữ liệu, bạn có thể dùng hàm select() để nhặt chi tiết các trường. 
   #Hàm select() tương đồng với tham số select trong hàm subset().
   mtcars %>%
@@ -245,7 +239,7 @@ sapply(pkgs, require, character.only=T)
            , weight = wt) %>%
     arrange(weight %>% desc)
 
-##3.5 Lọc các giá trị duy nhất
+##2.5 Lọc các giá trị duy nhất
   #Đôi khi, bạn chỉ muốn nhặt ra các giá trị duy nhất trong bảng dữ liệu. Để làm được việc này bạn có thể dùng hàm distinct(),
   #hàm này tương đồng với hàm unique() trong R base.
   mtcars %>%
@@ -263,7 +257,7 @@ sapply(pkgs, require, character.only=T)
   #chúng ta bắt buộc phải liệt kê rõ ràng vector hoặc bảng dữ liệu nào cần lấy danh sách giá trị duy nhất.
   #Trong khi đó, với distinct() bạn có thể tìm danh sách các giá trị duy nhất của 1 cột, hoặc nhiều cột từ một bảng dữ liệu nào đó.
   
-##3.6 Tạo mới trường dữ liệu
+##2.6 Tạo mới trường dữ liệu
   #Trong quá trình xử lý dữ liệu, rất nhiều lúc bạn muốn tạo thêm các trường dữ liệu mới (trường dữ liệu phát sinh)
   #dựa vào công thức có liên quan đến các trường dữ liệu hiện tại (business rules). Hàm mutate() được sử dụng để làm công việc này.
   #Trong R base, chúng ta cũng có thể thực hiện được yêu cầu này với hàm transform(), tuy nhiên với năng lực có phần hạn chế hơn, 
@@ -329,7 +323,7 @@ sapply(pkgs, require, character.only=T)
     ) %>%
     head
 
-##3.7 Tổng hợp các chỉ tiêu dữ liệu
+##2.7 Tổng hợp các chỉ tiêu dữ liệu
   #Trong quá trình xử lý dữ liệu, rất nhiều khi bạn phải tổng hợp dữ liệu theo các cách như: tính tổng, tính số dư bình quân, phương sai, 
   #tổng số lượng quan sát… Trong gói dplyr, bạn có thể sử dụng hàm summarise() để thực hiện công việc này.
   iris %>%
@@ -368,7 +362,7 @@ sapply(pkgs, require, character.only=T)
   #Kết qủa trên cho chúng ta cái nhìn chi tiết hơn về tổng số lượng sinh viên ứng tuyển, số lượng sinh viên ứng tuyển bình
   #quân và độ lệch chuẩn của số lượng sinh viên được chia theo giới tính và kết quả xét tuyển của trường (nhận, không nhận).
 
-##3.8 Ví dụ tổng hợp
+##2.8 Ví dụ tổng hợp
   #Vừa rồi chúng ta đã đi qua những hàm cơ bản trong dplyr được sử dụng thường xuyên trong quá trình xử lý dữ liệu.
   #Giờ chúng ta sẽ cùng đi qua một ví dụ tổng hợp hơn để cùng nhau áp dụng các kiến thức đã học được.
   #Chúng ta sẽ sử dụng dữ liệu về các khoản vay của khách hàng để làm ví dụ tổng hợp cho phần này.
@@ -400,10 +394,10 @@ sapply(pkgs, require, character.only=T)
   #cho tất cả các khách hàng và cho các khách hàng có khoảng vay lớn hơn 30 triệu.
 
 #+++++++++++++++++++++++++++++++++
-# 4 Các hàm nâng cao trong dplyr
+# 3 Các hàm nâng cao trong dplyr
 #+++++++++++++++++++++++++++++++++
 
-##4.1 Hàm điều kiện phân nhóm
+##3.1 Hàm điều kiện phân nhóm
   #Chắc hẳn trong quá trình phân tích và xử lý dữ liệu, chúng ta sẽ tạo thêm các trường mới hoặc tính toán dữ liệu dựa vào
   #từng điều kiện khác nhau để đưa ra giá trị của trường hoặc cách tính cho dữ liệu. Ví dụ: nhóm tuổi của khách hàng (KH) được
   #tính dựa vào độ tuổi trong các khoảng như: <= 18 tuổi sẽ là “nhóm 1”, từ 18-25 là “nhóm 2”, từ 25-35 là “nhóm 3”… hay xếp loại 
@@ -440,7 +434,7 @@ sapply(pkgs, require, character.only=T)
                                , TRUE ~ "nhom 4")
     )
 
-##4.2 Hàm gộp các hai bảng dữ liệu
+##3.2 Hàm gộp các hai bảng dữ liệu
   #Trong R base, chúng ta thường dùng hàm merge() để gộp 2 bảng dữ liệu với nhau dựa vào 1 hoặc nhiều trường dữ liệu giống nhau. 
   #Trong gói dplyr, chúng ta có các hàm riêng biệt được sử dụng cho mục đích này, tuy thuộc vào kết quả đầu ra mà chúng ta mong muốn. 
   #Chúng ta sẽ đi qua 4 hàm cơ bản của dplyr và so sách với hàm merge() trong R base.
@@ -527,7 +521,7 @@ sapply(pkgs, require, character.only=T)
     merge(y, by = c("StID", "UniID"))
 
 #+++++++++++++++++++++++++++++++++
-# 5 Ví dụ tổng hợp
+# 4 Ví dụ tổng hợp
 #+++++++++++++++++++++++++++++++++
   #Trong ví dụ này, chúng ta sẽ bổ sung thêm thông tin về chi nhánh (branch), và thông tin về khách hàng (customer) 
   #để biết thêm các chiều thông tin khác nhau của các khoản vay của khách hàng.

@@ -1,11 +1,11 @@
-#install.packages(c("tidyr", "reshape2"), dependencies = T)
-sapply(c("tidyr", "reshape2", "magrittr"), require, character.only = T)
+#install.packages("tidyverse")
+library(tidyverse)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++
-# 2 Các tình huống tổng hợp và xử lý dữ liệu
+# 1 Các tình huống tổng hợp và xử lý dữ liệu
 #+++++++++++++++++++++++++++++++++++++++++++++++
 
-##2.1 Gộp dữ liệu theo trục (unpivot table)
+##1.1 Gộp dữ liệu theo trục (unpivot table)
   #Khái niệm gộp dữ liệu theo trục là việc gộp và tổng hợp dữ liệu của nhiều cột dữ liệu vào 
   #thành một cột chung chứa giá trị của các cột này hoặc giá trị tổng hợp từ các cột này.
   #Một trong những lợi ích lớn nhất của việc gộp dữ liệu theo trục là hỗ trợ người phân tích 
@@ -94,7 +94,7 @@ sapply(c("tidyr", "reshape2", "magrittr"), require, character.only = T)
     stack(select = c("English", "History", "Maths")) %>%
     cbind(score[, c("StudentID", "Name", "Gender", "Status")])
 
-##2.2 Xoay dữ liệu theo trục (pivot table)
+##1.2 Xoay dữ liệu theo trục (pivot table)
   #Khái niệm xoay dữ liệu theo trục có thể rất quen thuộc với nhiều bạn đọc, đặc biết với những ai đã và đang sử
   #dụng Excel với pivot table. Xoay dữ liệu theo trục cho phép người dùng có thể nhìn dữ liệu theo nhiều sâu với 
   #cách thức tổng hợp dữ liệu khác nhau như: số lượng, tổng giá trị, giá trị bình quân, giá trị lớn nhất, nhỏ nhất…
@@ -180,7 +180,7 @@ sapply(c("tidyr", "reshape2", "magrittr"), require, character.only = T)
   #lưu ý: hàm dcast mặc định fun.aggregate là hàm length() nếu trong tình huống mà tham số
   #fun.aggregate không được bổ sung trong hàm.
   
-##2.3 Bổ sung dữ liệu trống/giá trị trắng (NA)
+##1.3 Bổ sung dữ liệu trống/giá trị trắng (NA)
   #Trong quá trình tổng hợp dữ liệu, nhiều trường hợp dữ liệu tổng hợp bị trống hoặc trắng 
   #do dữ liệu không có hoặc dữ liêu đầu vào bị thiếu. Như ví dụ ở trên khi chúng ta tính toán 
   #số dư trung bình của các sản phẩm cho vay theo chi nhánh sẽ có một số sản phẩm không bán được 
@@ -197,7 +197,7 @@ sapply(c("tidyr", "reshape2", "magrittr"), require, character.only = T)
   #bằng một list(danh sách các cột cần thay thế). Các trường thông tin còn lại không nằm trong 
   #list() này sẽ không được thay thế.
   
-##2.4 Tách và gộp các cột dữ liệu với nhau
+##1.4 Tách và gộp các cột dữ liệu với nhau
   #Rất nhiều khi trong quá trình tổng hợp dữ liệu, chúng ta muốn tách một cột dữ liệu ra thành 
   #nhiều cột dữ liệu hoặc ngược lại muốn gộp nhiều trường dữ liệu lại với nhau thành một cột 
   #dữ liệu duy nhất. Để thực hiện việc tách một trường dữ liệu ra thành nhiều trường, chúng ta sẽ dùng
